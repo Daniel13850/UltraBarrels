@@ -1,0 +1,5 @@
+name: UltraBarrels
+main: me.daniel1385.ultrabarrels.UltraBarrels
+author: Daniel1385
+version: ${project.version}
+api-version: 1.20

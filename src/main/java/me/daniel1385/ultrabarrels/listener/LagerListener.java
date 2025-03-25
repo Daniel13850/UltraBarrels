@@ -106,8 +106,9 @@ public class LagerListener implements Listener {
             Bukkit.getScheduler().runTask(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    Barrel barrel = (Barrel) loc.getBlock().getState();
-                    plugin.getLager(barrel); // Update NBT-Daten
+                    if(loc.getBlock().getState() instanceof Barrel barrel) {
+                        plugin.getLager(barrel); // Update NBT-Daten
+                    }
                 }
             });
         } else if(target != null) {
@@ -121,8 +122,9 @@ public class LagerListener implements Listener {
             Bukkit.getScheduler().runTask(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    Barrel barrel = (Barrel) loc.getBlock().getState();
-                    plugin.getLager(barrel); // Update NBT-Daten
+                    if(loc.getBlock().getState() instanceof Barrel barrel) {
+                        plugin.getLager(barrel); // Update NBT-Daten
+                    }
                 }
             });
         }

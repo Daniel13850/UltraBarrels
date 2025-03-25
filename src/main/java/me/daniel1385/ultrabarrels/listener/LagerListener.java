@@ -38,8 +38,11 @@ public class LagerListener implements Listener {
     public void onBlockExplode(BlockExplodeEvent event) {
         List<Block> remove = new ArrayList<>();
         for(Block b : event.blockList()) {
-            if(plugin.getLager(b.getLocation()) != null) {
-                remove.add(b);
+            if(b.getType().equals(Material.BARREL)) {
+                Barrel barrel = (Barrel) b.getState();
+                if (plugin.getLager(barrel) != null) {
+                    remove.add(b);
+                }
             }
         }
         for(Block b : remove) {
@@ -51,8 +54,11 @@ public class LagerListener implements Listener {
     public void onEntityExplode(EntityExplodeEvent event) {
         List<Block> remove = new ArrayList<>();
         for(Block b : event.blockList()) {
-            if(plugin.getLager(b.getLocation()) != null) {
-                remove.add(b);
+            if(b.getType().equals(Material.BARREL)) {
+                Barrel barrel = (Barrel) b.getState();
+                if (plugin.getLager(barrel) != null) {
+                    remove.add(b);
+                }
             }
         }
         for(Block b : remove) {
@@ -63,8 +69,9 @@ public class LagerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(BlockPlaceEvent event) {
         if(event.getBlock().getType().equals(Material.BARREL)) {
-            if(event.getItemInHand().getType().equals(Material.BARREL) && event.getPlayer().isSneaking()) {
-                plugin.initLager(event.getBlock().getLocation());
+            if(event.getPlayer().isSneaking()) {
+                Barrel barrel = (Barrel) event.getBlock().getState();
+                plugin.initLager(barrel);
             }
         }
     }
@@ -74,13 +81,13 @@ public class LagerListener implements Listener {
         LagerData source = null;
         LagerData target = null;
         if(event.getSource().getHolder() instanceof Barrel barrel) {
-            source = plugin.getLager(barrel.getLocation());
+            source = plugin.getLager(barrel);
         }
         if(event.getDestination().getHolder() instanceof Barrel barrel) {
-            target = plugin.getLager(barrel.getLocation());
+            target = plugin.getLager(barrel);
         }
 
-        if(source != null && target != null) {
+        if(source != null && target != null) { // sollte eig nicht passieren
             event.setCancelled(true);
         } else if(source != null) {
             if(source.getItem() == null) {
@@ -91,14 +98,18 @@ public class LagerListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if(checkInvSpace(event.getItem(), event.getDestination().getStorageContents()) >= event.getItem().getAmount()) {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        plugin.getLager(event.getSource().getLocation());
-                    }
-                });
+            if(source.getAmount() < event.getItem().getAmount()) {
+                event.setCancelled(true);
+                return;
             }
+            Location loc = event.getSource().getLocation();
+            Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    Barrel barrel = (Barrel) loc.getBlock().getState();
+                    plugin.getLager(barrel); // Update NBT-Daten
+                }
+            });
         } else if(target != null) {
             if(target.getItem() != null) {
                 if(!target.getItem().isSimilar(event.getItem())) {
@@ -106,14 +117,14 @@ public class LagerListener implements Listener {
                     return;
                 }
             }
-            if(checkInvItems(event.getItem(), event.getSource().getStorageContents()) >= event.getItem().getAmount()) {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        plugin.getLager(event.getDestination().getLocation());
-                    }
-                });
-            }
+            Location loc = event.getDestination().getLocation();
+            Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    Barrel barrel = (Barrel) loc.getBlock().getState();
+                    plugin.getLager(barrel); // Update NBT-Daten
+                }
+            });
         }
     }
 
@@ -128,8 +139,11 @@ public class LagerListener implements Listener {
         if(event.getItem() != null && event.getPlayer().isSneaking()) {
             return;
         }
-        Block block = event.getClickedBlock();
-        LagerData data = plugin.getLager(block.getLocation());
+        if(!event.getClickedBlock().getType().equals(Material.BARREL)) {
+            return;
+        }
+        Barrel barrel = (Barrel) event.getClickedBlock().getState();
+        LagerData data = plugin.getLager(barrel);
         if(data != null) {
             event.setCancelled(true);
             if(!guis.containsKey(event.getClickedBlock().getLocation())) {
@@ -142,7 +156,11 @@ public class LagerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        LagerData data = plugin.getLager(event.getBlock().getLocation());
+        if(!event.getBlock().getType().equals(Material.BARREL)) {
+            return;
+        }
+        Barrel barrel = (Barrel) event.getBlock().getState();
+        LagerData data = plugin.getLager(barrel);
         if(data != null) {
             long amount = data.getAmount();
             if(amount > 0) {

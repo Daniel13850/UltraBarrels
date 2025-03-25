@@ -61,20 +61,11 @@ public class UltraBarrels extends JavaPlugin {
         return net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', translateHexCodes(text));
     }
 
-    public boolean update(Location loc, LagerData data) {
-        if(!loc.getChunk().isLoaded()) {
-            return false;
-        } else {
-            Block b = loc.getBlock();
-            if (!b.getType().equals(Material.BARREL)) {
-                return false;
-            }
-        }
-        Barrel fass = (Barrel) loc.getBlock().getState();
-        PersistentDataContainer cont = fass.getPersistentDataContainer();
+    public boolean update(Barrel barrel, LagerData data) {
+        PersistentDataContainer cont = barrel.getPersistentDataContainer();
         NamespacedKey keyAmount = new NamespacedKey(this, "amount");
         NamespacedKey keyItem = new NamespacedKey(this, "item");
-        fass.getSnapshotInventory().clear();
+        barrel.getSnapshotInventory().clear();
         if(data.getAmount() > 0 && data.getItem() != null) {
             ItemStack one = new ItemStack(data.getItem());
             one.setAmount(1);
@@ -85,7 +76,7 @@ public class UltraBarrels extends JavaPlugin {
                 e.printStackTrace();
                 return false;
             }
-            fass.getSnapshotInventory().setItem(0, one); // Platziere ein Exemplar als Dummy-Item im Fass, damit Trichter und Komperatoren funktionieren
+            barrel.getSnapshotInventory().setItem(0, one); // Platziere ein Exemplar als Dummy-Item im Fass, damit Trichter und Komperatoren funktionieren
             cont.set(keyItem, PersistentDataType.STRING, s);
             cont.set(keyAmount, PersistentDataType.LONG, data.getAmount());
         } else {
@@ -94,21 +85,13 @@ public class UltraBarrels extends JavaPlugin {
             data.setAmount(0);
             data.setItem(null);
         }
-        fass.update();
-        Bukkit.getPluginManager().callEvent(new LagerUpdateEvent(loc, data));
+        barrel.update();
+        Bukkit.getPluginManager().callEvent(new LagerUpdateEvent(barrel, data));
         return true;
     }
 
-    public LagerData getLager(Location loc) {
-        if(!loc.getChunk().isLoaded()) {
-            return null;
-        }
-        Block b = loc.getBlock();
-        if(!b.getType().equals(Material.BARREL)) {
-            return null;
-        }
-        Barrel fass = (Barrel) b.getState();
-        PersistentDataContainer cont = fass.getPersistentDataContainer();
+    public LagerData getLager(Barrel barrel) {
+        PersistentDataContainer cont = barrel.getPersistentDataContainer();
         NamespacedKey keyAmount = new NamespacedKey(this, "amount");
         NamespacedKey keyItem = new NamespacedKey(this, "item");
         if(cont.has(keyAmount, PersistentDataType.LONG)) {
@@ -127,23 +110,23 @@ public class UltraBarrels extends JavaPlugin {
             long value = cont.get(keyAmount, PersistentDataType.LONG);
             int update = 0;
             if(item != null) {
-                int amount = checkInvItems(item, fass.getSnapshotInventory().getStorageContents());
+                int amount = checkInvItems(item, barrel.getSnapshotInventory().getStorageContents());
                 if(amount == 0) {
                     update = -1;
                 } else {
                     update = amount-1;
                 }
             } else {
-                ItemStack in = fass.getSnapshotInventory().getItem(0);
+                ItemStack in = barrel.getSnapshotInventory().getItem(0);
                 if(in != null) {
                     item = new ItemStack(in);
-                    update = checkInvItems(item, fass.getSnapshotInventory().getStorageContents());
+                    update = checkInvItems(item, barrel.getSnapshotInventory().getStorageContents());
                 }
             }
             if(update != 0) {
                 LagerData data = new LagerData(item, value+update);
-                update(loc, data);
-                return getLager(loc);
+                update(barrel, data);
+                return getLager(barrel);
             } else {
                 return new LagerData(item, value);
             }
@@ -152,12 +135,12 @@ public class UltraBarrels extends JavaPlugin {
         }
     }
 
-    public boolean initLager(Location loc) {
-        return update(loc, new LagerData(null, 0));
+    public boolean initLager(Barrel barrel) {
+        return update(barrel, new LagerData(null, 0));
     }
 
-    public boolean addLager(Location loc, ItemStack item, int i) {
-        LagerData data = getLager(loc);
+    public boolean addLager(Barrel barrel, ItemStack item, int i) {
+        LagerData data = getLager(barrel);
         if(data == null) {
             return false;
         }
@@ -165,14 +148,14 @@ public class UltraBarrels extends JavaPlugin {
             if(!item.isSimilar(data.getItem())) {
                 return false;
             }
-            return update(loc, new LagerData(item, data.getAmount()+i));
+            return update(barrel, new LagerData(item, data.getAmount()+i));
         } else {
-            return update(loc, new LagerData(item, i));
+            return update(barrel, new LagerData(item, i));
         }
     }
 
-    public boolean removeLager(Location loc, ItemStack item, int i) {
-        LagerData data = getLager(loc);
+    public boolean removeLager(Barrel barrel, ItemStack item, int i) {
+        LagerData data = getLager(barrel);
         if(data == null) {
             return false;
         }
@@ -185,15 +168,15 @@ public class UltraBarrels extends JavaPlugin {
         if(data.getAmount() < i) {
             return false;
         }
-        return update(loc, new LagerData(item, data.getAmount()-i));
+        return update(barrel, new LagerData(item, data.getAmount()-i));
     }
 
-    public boolean addLager(Location loc, ItemStack item) {
-        return addLager(loc, item, item.getAmount());
+    public boolean addLager(Barrel barrel, ItemStack item) {
+        return addLager(barrel, item, item.getAmount());
     }
 
-    public List<ItemStack> removeLager(Location loc, int i) {
-        LagerData data = getLager(loc);
+    public List<ItemStack> removeLager(Barrel barrel, int i) {
+        LagerData data = getLager(barrel);
         if(data == null) {
             return null;
         }
@@ -204,7 +187,7 @@ public class UltraBarrels extends JavaPlugin {
             return null;
         }
         ItemStack item = data.getItem();
-        if(update(loc, new LagerData(item, data.getAmount()-i))) {
+        if(update(barrel, new LagerData(item, data.getAmount()-i))) {
             List<ItemStack> result = new ArrayList<>();
             int rest = i;
             while(rest > 0) {

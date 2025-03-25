@@ -2,16 +2,17 @@ package me.daniel1385.ultrabarrels.events;
 
 import me.daniel1385.ultrabarrels.objects.LagerData;
 import org.bukkit.Location;
+import org.bukkit.block.Barrel;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class LagerUpdateEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
-	private Location loc;
+	private Barrel barrel;
 	private LagerData data;
 
-	public LagerUpdateEvent(Location loc, LagerData data) {
-		this.loc = loc;
+	public LagerUpdateEvent(Barrel barrel, LagerData data) {
+		this.barrel = barrel;
 		this.data = data;
 	}
 
@@ -19,8 +20,8 @@ public class LagerUpdateEvent extends Event {
 		return data;
 	}
 
-	public Location getLocation() {
-		return this.loc;
+	public Barrel getBarrel() {
+		return barrel;
 	}
 
 	public HandlerList getHandlers() {

@@ -6,6 +6,9 @@ import me.daniel1385.ultrabarrels.events.LagerUpdateEvent;
 import me.daniel1385.ultrabarrels.objects.LagerData;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Block;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -110,7 +113,7 @@ public class UnendlichesLagerGUI extends InventoryGUI implements Listener {
 
     @EventHandler
     public void onUpdate(LagerUpdateEvent event) {
-        if(!event.getLocation().equals(loc)) {
+        if(!event.getBarrel().getLocation().equals(loc)) {
             return;
         }
         updateGUI(event.getData());
@@ -118,7 +121,13 @@ public class UnendlichesLagerGUI extends InventoryGUI implements Listener {
 
     @Override
     public void click(Player p, int id, boolean paramBoolean) {
-        if(plugin.getLager(loc) == null) {
+        Block block = loc.getBlock();
+        if (!block.getType().equals(Material.BARREL)) {
+            p.closeInventory();
+            return;
+        }
+        Barrel barrel = (Barrel) block.getState();
+        if(plugin.getLager(barrel) == null) {
             p.closeInventory();
             return;
         }
@@ -145,14 +154,14 @@ public class UnendlichesLagerGUI extends InventoryGUI implements Listener {
             if(id == 16) {
                 anzahl = 64;
             }
-            List<ItemStack> stack = plugin.removeLager(loc, anzahl);
+            List<ItemStack> stack = plugin.removeLager(barrel, anzahl);
             if(stack == null) {
                 p.sendMessage(plugin.getPrefix() + "§cEs sind nicht genügend Items vorhanden!");
             } else {
                 if(checkInvSpace(stack.get(0), p.getInventory().getStorageContents()) < anzahl) {
                     p.sendMessage(plugin.getPrefix() + "§cDein Inventar ist voll!");
                     for(ItemStack item : stack) {
-                        plugin.addLager(loc, item);
+                        plugin.addLager(barrel, item);
                     }
                     return;
                 } else {
@@ -168,20 +177,26 @@ public class UnendlichesLagerGUI extends InventoryGUI implements Listener {
     public void onClickInv(InventoryClickEvent event) {
         if (event.getInventory().equals(this.inv)) {
             event.setCancelled(true);
-            if(plugin.getLager(loc) == null) {
-                event.getWhoClicked().closeInventory();
-                return;
-            }
             Inventory click = event.getClickedInventory();
             if (click == null) {
                 return;
             }
             if (click.equals(event.getWhoClicked().getInventory())) {
+                Block block = loc.getBlock();
+                if (!block.getType().equals(Material.BARREL)) {
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
+                Barrel barrel = (Barrel) block.getState();
+                if(plugin.getLager(barrel) == null) {
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
                 if(event.getCurrentItem() == null) {
                     return;
                 }
                 if(event.isLeftClick()) {
-                    if (plugin.addLager(loc, new ItemStack(event.getCurrentItem()))) {
+                    if (plugin.addLager(barrel, new ItemStack(event.getCurrentItem()))) {
                         event.getCurrentItem().setAmount(0);
                     } else {
                         event.getWhoClicked().sendMessage(plugin.getPrefix() + "§cDu kannst nur das selbe Item hinzufügen!");
@@ -189,7 +204,7 @@ public class UnendlichesLagerGUI extends InventoryGUI implements Listener {
                 } else if(event.isRightClick()) {
                     ItemStack neu = new ItemStack(event.getCurrentItem());
                     neu.setAmount(1);
-                    if (plugin.addLager(loc, neu)) {
+                    if (plugin.addLager(barrel, neu)) {
                         event.getCurrentItem().setAmount(event.getCurrentItem().getAmount()-1);
                     } else {
                         event.getWhoClicked().sendMessage(plugin.getPrefix() + "§cDu kannst nur das selbe Item hinzufügen!");

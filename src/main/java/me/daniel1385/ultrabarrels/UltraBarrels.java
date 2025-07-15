@@ -61,7 +61,7 @@ public class UltraBarrels extends JavaPlugin {
         return net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', translateHexCodes(text));
     }
 
-    public boolean update(Barrel barrel, LagerData data) {
+    public void update(Barrel barrel, LagerData data) {
         PersistentDataContainer cont = barrel.getPersistentDataContainer();
         NamespacedKey keyAmount = new NamespacedKey(this, "amount");
         NamespacedKey keyItem = new NamespacedKey(this, "item");
@@ -74,7 +74,7 @@ public class UltraBarrels extends JavaPlugin {
                 s = toString(one);
             } catch (Exception e) {
                 e.printStackTrace();
-                return false;
+                return;
             }
             barrel.getSnapshotInventory().setItem(0, one); // Platziere ein Exemplar als Dummy-Item im Fass, damit Trichter und Komperatoren funktionieren
             cont.set(keyItem, PersistentDataType.STRING, s);
@@ -87,7 +87,7 @@ public class UltraBarrels extends JavaPlugin {
         }
         barrel.update();
         Bukkit.getPluginManager().callEvent(new LagerUpdateEvent(barrel, data));
-        return true;
+        return;
     }
 
     public LagerData getLager(Barrel barrel) {
@@ -135,44 +135,44 @@ public class UltraBarrels extends JavaPlugin {
         }
     }
 
-    public boolean initLager(Barrel barrel) {
-        return update(barrel, new LagerData(null, 0));
+    public void initLager(Barrel barrel) {
+        update(barrel, new LagerData(null, 0));
     }
 
-    public boolean addLager(Barrel barrel, ItemStack item, int i) {
+    public void addLager(Barrel barrel, ItemStack item, int i) {
         LagerData data = getLager(barrel);
         if(data == null) {
-            return false;
+            return;
         }
         if(data.getItem() != null) {
             if(!item.isSimilar(data.getItem())) {
-                return false;
+                return;
             }
-            return update(barrel, new LagerData(item, data.getAmount()+i));
+            update(barrel, new LagerData(item, data.getAmount()+i));
         } else {
-            return update(barrel, new LagerData(item, i));
+            update(barrel, new LagerData(item, i));
         }
     }
 
-    public boolean removeLager(Barrel barrel, ItemStack item, int i) {
+    public void removeLager(Barrel barrel, ItemStack item, int i) {
         LagerData data = getLager(barrel);
         if(data == null) {
-            return false;
+            return;
         }
         if(data.getItem() == null) {
-            return false;
+            return;
         }
         if(!item.isSimilar(data.getItem())) {
-            return false;
+            return;
         }
         if(data.getAmount() < i) {
-            return false;
+            return;
         }
-        return update(barrel, new LagerData(item, data.getAmount()-i));
+        update(barrel, new LagerData(item, data.getAmount()-i));
     }
 
-    public boolean addLager(Barrel barrel, ItemStack item) {
-        return addLager(barrel, item, item.getAmount());
+    public void addLager(Barrel barrel, ItemStack item) {
+        addLager(barrel, item, item.getAmount());
     }
 
     public List<ItemStack> removeLager(Barrel barrel, int i) {
@@ -187,19 +187,16 @@ public class UltraBarrels extends JavaPlugin {
             return null;
         }
         ItemStack item = data.getItem();
-        if(update(barrel, new LagerData(item, data.getAmount()-i))) {
-            List<ItemStack> result = new ArrayList<>();
-            int rest = i;
-            while(rest > 0) {
-                ItemStack item2 = new ItemStack(item);
-                item2.setAmount(Integer.min(item.getMaxStackSize(), rest));
-                result.add(item2);
-                rest -= item2.getAmount();
-            }
-            return result;
-        } else {
-            return null;
+        update(barrel, new LagerData(item, data.getAmount()-i));
+        List<ItemStack> result = new ArrayList<>();
+        int rest = i;
+        while(rest > 0) {
+            ItemStack item2 = new ItemStack(item);
+            item2.setAmount(Integer.min(item.getMaxStackSize(), rest));
+            result.add(item2);
+            rest -= item2.getAmount();
         }
+        return result;
     }
 
     private String toString(ItemStack stack) throws Exception {

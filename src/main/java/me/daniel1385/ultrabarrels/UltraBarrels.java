@@ -139,40 +139,42 @@ public class UltraBarrels extends JavaPlugin {
         update(barrel, new LagerData(null, 0));
     }
 
-    public void addLager(Barrel barrel, ItemStack item, int i) {
+    public boolean addLager(Barrel barrel, ItemStack item, int i) {
         LagerData data = getLager(barrel);
         if(data == null) {
-            return;
+            return false;
         }
         if(data.getItem() != null) {
             if(!item.isSimilar(data.getItem())) {
-                return;
+                return false;
             }
             update(barrel, new LagerData(item, data.getAmount()+i));
         } else {
             update(barrel, new LagerData(item, i));
         }
+        return true;
     }
 
-    public void removeLager(Barrel barrel, ItemStack item, int i) {
+    public boolean removeLager(Barrel barrel, ItemStack item, int i) {
         LagerData data = getLager(barrel);
         if(data == null) {
-            return;
+            return false;
         }
         if(data.getItem() == null) {
-            return;
+            return false;
         }
         if(!item.isSimilar(data.getItem())) {
-            return;
+            return false;
         }
         if(data.getAmount() < i) {
-            return;
+            return false;
         }
         update(barrel, new LagerData(item, data.getAmount()-i));
+        return true;
     }
 
-    public void addLager(Barrel barrel, ItemStack item) {
-        addLager(barrel, item, item.getAmount());
+    public boolean addLager(Barrel barrel, ItemStack item) {
+        return addLager(barrel, item, item.getAmount());
     }
 
     public List<ItemStack> removeLager(Barrel barrel, int i) {

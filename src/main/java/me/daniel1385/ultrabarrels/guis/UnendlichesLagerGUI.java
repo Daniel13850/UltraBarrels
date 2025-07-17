@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class UnendlichesLagerGUI extends InventoryGUI implements Listener {
+public class UnendlichesLagerGUI extends InventoryGUI {
     private Location loc;
     private UltraBarrels plugin;
 

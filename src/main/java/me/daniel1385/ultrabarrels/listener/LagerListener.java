@@ -4,6 +4,7 @@ import me.daniel1385.ultrabarrels.UltraBarrels;
 import me.daniel1385.ultrabarrels.guis.UnendlichesLagerGUI;
 import me.daniel1385.ultrabarrels.objects.LagerData;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Barrel;
@@ -20,11 +21,9 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LagerListener implements Listener {
     private Map<Location, UnendlichesLagerGUI> guis = new HashMap<>();
@@ -69,7 +68,7 @@ public class LagerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(BlockPlaceEvent event) {
         if(event.getBlock().getType().equals(Material.BARREL)) {
-            if(event.getPlayer().isSneaking()) {
+            if(plugin.isLager(event.getItemInHand())) {
                 Barrel barrel = (Barrel) event.getBlock().getState();
                 plugin.initLager(barrel);
             }
@@ -168,6 +167,11 @@ public class LagerListener implements Listener {
             if(amount > 0) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage(plugin.getPrefix() + "§cDu darfst diesen Block erst abbauen, wenn er leer ist!");
+            } else {
+                event.setDropItems(false);
+                if(event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+                    event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), plugin.getLagerItem());
+                }
             }
         }
     }

@@ -11,6 +11,9 @@ import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,15 +22,13 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UltraBarrels extends JavaPlugin {
     private String prefix;
+    private NamespacedKey keyRecipe;
 
     @Override
     public void onEnable() {
@@ -38,6 +39,20 @@ public class UltraBarrels extends JavaPlugin {
         saveConfig();
         prefix = translateAllCodes(config.getString("prefix")) + "§r";
         Bukkit.getPluginManager().registerEvents(new LagerListener(this), this);
+        keyRecipe = new NamespacedKey(this, "lager");
+        ShapedRecipe recipe = new ShapedRecipe(keyRecipe, getLagerItem());
+        recipe.shape("ABA", "CDC", "AEA");
+        recipe.setIngredient('A', Material.OAK_LOG);
+        recipe.setIngredient('B', Material.HOPPER);
+        recipe.setIngredient('C', Material.GOLD_BLOCK);
+        recipe.setIngredient('D', Material.BARREL);
+        recipe.setIngredient('E', Material.IRON_BLOCK);
+        Bukkit.addRecipe(recipe);
+    }
+
+    @Override
+    public void onDisable() {
+        Bukkit.removeRecipe(keyRecipe);
     }
 
     public String getPrefix() {
@@ -133,6 +148,28 @@ public class UltraBarrels extends JavaPlugin {
         } else {
             return null;
         }
+    }
+
+    public ItemStack getLagerItem() {
+        ItemStack lager = new ItemStack(Material.BARREL);
+        ItemMeta meta = lager.getItemMeta();
+        meta.setDisplayName("§6Unendliches Lager");
+        meta.setLore(Arrays.asList("§7Lagere unendliche Mengen eines Items in diesem Lager."));
+        PersistentDataContainer cont = meta.getPersistentDataContainer();
+        NamespacedKey keylager = new NamespacedKey(this, "lager");
+        cont.set(keylager, PersistentDataType.BOOLEAN, true);
+        lager.setItemMeta(meta);
+        return lager;
+    }
+
+    public boolean isLager(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer cont = meta.getPersistentDataContainer();
+        NamespacedKey keylager = new NamespacedKey(this, "lager");
+        if(cont.has(keylager, PersistentDataType.BOOLEAN)) {
+            return cont.get(keylager, PersistentDataType.BOOLEAN);
+        }
+        return false;
     }
 
     public void initLager(Barrel barrel) {

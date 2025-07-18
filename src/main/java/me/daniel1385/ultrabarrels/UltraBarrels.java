@@ -41,9 +41,8 @@ public class UltraBarrels extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new LagerListener(this), this);
         keyRecipe = new NamespacedKey(this, "lager");
         ShapedRecipe recipe = new ShapedRecipe(keyRecipe, getLagerItem());
-        recipe.shape("ABA", "CDC", "AEA");
+        recipe.shape("AEA", "CDC", "AEA");
         recipe.setIngredient('A', Material.OAK_LOG);
-        recipe.setIngredient('B', Material.HOPPER);
         recipe.setIngredient('C', Material.GOLD_BLOCK);
         recipe.setIngredient('D', Material.BARREL);
         recipe.setIngredient('E', Material.IRON_BLOCK);

@@ -84,6 +84,7 @@ public class UltraBarrels extends JavaPlugin {
         if(data.getAmount() > 0 && data.getItem() != null) {
             ItemStack one = new ItemStack(data.getItem());
             one.setAmount(1);
+            data.setItem(one);
             String s;
             try {
                 s = toString(one);

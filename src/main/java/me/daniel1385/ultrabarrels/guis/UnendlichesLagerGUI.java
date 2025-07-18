@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,7 +24,7 @@ public class UnendlichesLagerGUI extends InventoryGUI {
     private UltraBarrels plugin;
 
     public UnendlichesLagerGUI(UltraBarrels plugin, Location loc, LagerData data) {
-        super(plugin, "Unendliches Lager", 3);
+        super(plugin, "Unendliches Lager", 4);
         this.loc = loc;
         this.plugin = plugin;
         updateGUI(data);
@@ -34,81 +35,48 @@ public class UnendlichesLagerGUI extends InventoryGUI {
         ItemStack item = data.getItem();
         long amount = data.getAmount();
         if(item == null) {
-            setItem(13, new ItemStack(Material.BARRIER), "§aKlicke auf ein Item, um es dem Lager hinzuzufügen!");
+            setItem(4, new ItemStack(Material.BARRIER), "§aKlicke auf ein Item, um es dem Lager hinzuzufügen!");
         } else {
-            long wert = amount;
-            if(wert > 999999999) {
-                wert = 999999999;
-            }
-            long a = wert / 100000000;
-            wert -= a*100000000;
-            long b = wert / 10000000;
-            wert -= b*10000000;
-            long c = wert / 1000000;
-            wert -= c*1000000;
-            long d = wert / 100000;
-            wert -= d*100000;
-            long e = wert / 10000;
-            wert -= e*10000;
-            long f = wert / 1000;
-            wert -= f*1000;
-            long g = wert / 100;
-            wert -= g*100;
-            long h = wert / 10;
-            wert -= h*10;
-            long i = wert;
-            ItemStack aa = new ItemStack(item);
-            aa.setAmount((int) a);
-            setItem(0, aa);
-            ItemStack bb = new ItemStack(item);
-            bb.setAmount((int) b);
-            setItem(1, bb);
-            ItemStack cc = new ItemStack(item);
-            cc.setAmount((int) c);
-            setItem(2, cc);
-            ItemStack dd = new ItemStack(item);
-            dd.setAmount((int) d);
-            setItem(3, dd);
-            ItemStack ee = new ItemStack(item);
-            ee.setAmount((int) e);
-            setItem(4, ee);
-            ItemStack ff = new ItemStack(item);
-            ff.setAmount((int) f);
-            setItem(5, ff);
-            ItemStack gg = new ItemStack(item);
-            gg.setAmount((int) g);
-            setItem(6, gg);
-            ItemStack hh = new ItemStack(item);
-            hh.setAmount((int) h);
-            setItem(7, hh);
-            ItemStack ii = new ItemStack(item);
-            ii.setAmount((int) i);
-            setItem(8, ii);
-            ItemStack stack = new ItemStack(item);
-            stack.setAmount(1);
-            setItem(10, stack, "§c1 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(2);
-            setItem(11, stack, "§c2 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(4);
-            setItem(12, stack, "§c4 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(8);
-            setItem(13, stack, "§c8 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(16);
-            setItem(14, stack, "§c16 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(32);
-            setItem(15, stack, "§c32 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(64);
-            setItem(16, stack, "§c64 abholen", "§7Anzahl: " + amount);
-            stack = new ItemStack(item);
-            stack.setAmount(1);
-            setItem(22, stack, "§aItems hinzufügen", "§7Anzahl: " + amount, "§7Linksklick: Stack hinzufügen", "§7Rechtsklick: 1 Item hinzufügen");
+            setItem(4, item);
         }
+        long wert = amount;
+        if(wert > 999999999) {
+            wert = 999999999;
+        }
+        long a = wert / 100000000;
+        wert -= a*100000000;
+        long b = wert / 10000000;
+        wert -= b*10000000;
+        long c = wert / 1000000;
+        wert -= c*1000000;
+        long d = wert / 100000;
+        wert -= d*100000;
+        long e = wert / 10000;
+        wert -= e*10000;
+        long f = wert / 1000;
+        wert -= f*1000;
+        long g = wert / 100;
+        wert -= g*100;
+        long h = wert / 10;
+        wert -= h*10;
+        long i = wert;
+        setItem(9, Integer.max((int) a, 1), a == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(10, Integer.max((int) b, 1), b == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(11, Integer.max((int) c, 1), c == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(12, Integer.max((int) d, 1), d == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(13, Integer.max((int) e, 1), e == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(14, Integer.max((int) f, 1), f == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(15, Integer.max((int) g, 1), g == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(16, Integer.max((int) h, 1), h == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(17, Integer.max((int) i, 1), i == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
+        setItem(19, Material.RED_STAINED_GLASS_PANE, 1, "§c1 abholen", "§7Anzahl: §6" + amount);
+        setItem(20, Material.RED_STAINED_GLASS_PANE, 2, "§c2 abholen", "§7Anzahl: §6" + amount);
+        setItem(21, Material.RED_STAINED_GLASS_PANE, 4, "§c4 abholen", "§7Anzahl: §6" + amount);
+        setItem(22, Material.RED_STAINED_GLASS_PANE, 8, "§c8 abholen", "§7Anzahl: §6" + amount);
+        setItem(23, Material.RED_STAINED_GLASS_PANE, 16, "§c16 abholen", "§7Anzahl: §6" + amount);
+        setItem(24, Material.RED_STAINED_GLASS_PANE, 32, "§c32 abholen", "§7Anzahl: §6" + amount);
+        setItem(25, Material.RED_STAINED_GLASS_PANE, 64, "§c64 abholen", "§7Anzahl: §6" + amount);
+        setItem(31, Material.LIME_STAINED_GLASS_PANE, "§aItems hinzufügen", "§7Anzahl: §6" + amount, "§7Linksklick: §fStack hinzufügen", "§7Rechtsklick: §f1 Item hinzufügen");
     }
 
     @EventHandler
@@ -132,26 +100,26 @@ public class UnendlichesLagerGUI extends InventoryGUI {
             return;
         }
         int anzahl = 0;
-        if(id >= 10 && id <= 16) {
-            if(id == 10) {
+        if(id >= 19 && id <= 25) {
+            if(id == 19) {
                 anzahl = 1;
             }
-            if(id == 11) {
+            if(id == 20) {
                 anzahl = 2;
             }
-            if(id == 12) {
+            if(id == 21) {
                 anzahl = 4;
             }
-            if(id == 13) {
+            if(id == 22) {
                 anzahl = 8;
             }
-            if(id == 14) {
+            if(id == 23) {
                 anzahl = 16;
             }
-            if(id == 15) {
+            if(id == 24) {
                 anzahl = 32;
             }
-            if(id == 16) {
+            if(id == 25) {
                 anzahl = 64;
             }
             List<ItemStack> stack = plugin.removeLager(barrel, anzahl);
@@ -175,7 +143,7 @@ public class UnendlichesLagerGUI extends InventoryGUI {
 
     @EventHandler
     public void onClickInv(InventoryClickEvent event) {
-        if (event.getInventory().equals(this.inv)) {
+        if (event.getInventory().equals(super.inv)) {
             event.setCancelled(true);
             Inventory click = event.getClickedInventory();
             if (click == null) {

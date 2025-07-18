@@ -163,13 +163,17 @@ public class UltraBarrels extends JavaPlugin {
     }
 
     public boolean isLager(ItemStack item) {
+        if(!item.getType().equals(Material.BARREL)) {
+            return false;
+        }
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer cont = meta.getPersistentDataContainer();
         NamespacedKey keylager = new NamespacedKey(this, "lager");
         if(cont.has(keylager, PersistentDataType.BOOLEAN)) {
             return cont.get(keylager, PersistentDataType.BOOLEAN);
+        } else {
+            return false;
         }
-        return false;
     }
 
     public void initLager(Barrel barrel) {

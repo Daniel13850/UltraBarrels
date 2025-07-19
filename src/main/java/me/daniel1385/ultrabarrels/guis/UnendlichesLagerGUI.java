@@ -76,7 +76,7 @@ public class UnendlichesLagerGUI extends InventoryGUI {
         setItem(23, Material.RED_STAINED_GLASS_PANE, 16, "§c16 abholen", "§7Anzahl: §6" + amount);
         setItem(24, Material.RED_STAINED_GLASS_PANE, 32, "§c32 abholen", "§7Anzahl: §6" + amount);
         setItem(25, Material.RED_STAINED_GLASS_PANE, 64, "§c64 abholen", "§7Anzahl: §6" + amount);
-        setItem(31, Material.LIME_STAINED_GLASS_PANE, "§aItems hinzufügen", "§7Anzahl: §6" + amount, "§7Linksklick: §fStack hinzufügen", "§7Rechtsklick: §f1 Item hinzufügen");
+        setItem(31, Material.LIME_STAINED_GLASS_PANE, "§aItems hinzufügen", "§7Anzahl: §6" + amount, "§7Linksklick: Stack hinzufügen", "§7Rechtsklick: 1 Item hinzufügen");
     }
 
     @EventHandler

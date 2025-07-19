@@ -69,13 +69,13 @@ public class UnendlichesLagerGUI extends InventoryGUI {
         setItem(15, Integer.max((int) g, 1), g == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
         setItem(16, Integer.max((int) h, 1), h == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
         setItem(17, Integer.max((int) i, 1), i == 0 ? Material.WHITE_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, "§7Anzahl: §6" + amount);
-        setItem(19, Material.RED_STAINED_GLASS_PANE, 1, "§c1 abholen", "§7Anzahl: §6" + amount);
-        setItem(20, Material.RED_STAINED_GLASS_PANE, 2, "§c2 abholen", "§7Anzahl: §6" + amount);
-        setItem(21, Material.RED_STAINED_GLASS_PANE, 4, "§c4 abholen", "§7Anzahl: §6" + amount);
-        setItem(22, Material.RED_STAINED_GLASS_PANE, 8, "§c8 abholen", "§7Anzahl: §6" + amount);
-        setItem(23, Material.RED_STAINED_GLASS_PANE, 16, "§c16 abholen", "§7Anzahl: §6" + amount);
-        setItem(24, Material.RED_STAINED_GLASS_PANE, 32, "§c32 abholen", "§7Anzahl: §6" + amount);
-        setItem(25, Material.RED_STAINED_GLASS_PANE, 64, "§c64 abholen", "§7Anzahl: §6" + amount);
+        setItem(19, 1, Material.RED_STAINED_GLASS_PANE, 1, "§c1 abholen", "§7Anzahl: §6" + amount);
+        setItem(20, 2, Material.RED_STAINED_GLASS_PANE, 2, "§c2 abholen", "§7Anzahl: §6" + amount);
+        setItem(21, 4, Material.RED_STAINED_GLASS_PANE, 4, "§c4 abholen", "§7Anzahl: §6" + amount);
+        setItem(22, 8, Material.RED_STAINED_GLASS_PANE, 8, "§c8 abholen", "§7Anzahl: §6" + amount);
+        setItem(23, 16, Material.RED_STAINED_GLASS_PANE, 16, "§c16 abholen", "§7Anzahl: §6" + amount);
+        setItem(24, 32, Material.RED_STAINED_GLASS_PANE, 32, "§c32 abholen", "§7Anzahl: §6" + amount);
+        setItem(25, 64, Material.RED_STAINED_GLASS_PANE, 64, "§c64 abholen", "§7Anzahl: §6" + amount);
         setItem(31, Material.LIME_STAINED_GLASS_PANE, "§aItems hinzufügen", "§7Anzahl: §6" + amount, "§7Linksklick: Stack hinzufügen", "§7Rechtsklick: 1 Item hinzufügen");
     }
 

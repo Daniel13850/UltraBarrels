@@ -6,7 +6,7 @@
 
     <groupId>me.daniel1385</groupId>
     <artifactId>UltraBarrels</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

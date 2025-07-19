@@ -1,3 +1,3 @@
 Minecraft UltraBarrels Plugin
 
-SpigotMC: coming soon
+SpigotMC: https://www.spigotmc.org/resources/ultrabarrels.127114/

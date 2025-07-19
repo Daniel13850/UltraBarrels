@@ -1,5 +1,6 @@
 package me.daniel1385.ultrabarrels;
 
+import me.daniel1385.ultrabarrels.apis.Metrics;
 import me.daniel1385.ultrabarrels.events.LagerUpdateEvent;
 import me.daniel1385.ultrabarrels.listener.LagerListener;
 import me.daniel1385.ultrabarrels.objects.LagerData;
@@ -47,6 +48,7 @@ public class UltraBarrels extends JavaPlugin {
         recipe.setIngredient('D', Material.BARREL);
         recipe.setIngredient('E', Material.IRON_BLOCK);
         Bukkit.addRecipe(recipe);
+        Metrics metrics = new Metrics(this, 26568);
     }
 
     @Override
